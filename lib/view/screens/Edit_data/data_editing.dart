@@ -2,30 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:student_manage_app/Db%20connections/db_table.dart';
 import 'package:student_manage_app/Model/student_model.dart';
-import 'package:student_manage_app/controllers/student_adding.dart';
-import 'package:student_manage_app/view/screens/Student_adding/funtions/funtions.dart';
-import 'package:student_manage_app/view/screens/Student_adding/widgets/image_box.dart';
+import 'package:student_manage_app/controllers/student_edit_controller.dart';
+import 'package:student_manage_app/view/screens/Edit_data/widgets/editimage.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/savebutton.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/textfiled.dart';
 
-class Addstudent extends StatelessWidget {
-  Addstudent({
+class Editstudent extends StatelessWidget {
+  final StudentModel studentModel;
+  Editstudent({
     super.key,
+    required this.studentModel,
   }) {}
-  final TextEditingController namecontroller = TextEditingController();
-  final TextEditingController classcontroller = TextEditingController();
-  final TextEditingController agecontroller = TextEditingController();
-  final TextEditingController phonecontroller = TextEditingController();
-  final Studentaddcontrol controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
-    controller.initialize();
+    Editcontroller.initialValues(
+        study: studentModel.study,
+        name: studentModel.name,
+        age: studentModel.age,
+        imagePaths: studentModel.images,
+        phone: studentModel.phone);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 185, 206, 208),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Student add',
+          'Edit student',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(255, 108, 178, 185),
@@ -38,36 +40,36 @@ class Addstudent extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [ImageContainer()],
+              children: [EditImage()],
             ),
             SizedBox(
               height: 20,
             ),
             Namefield(
-              namecontroller: namecontroller,
+              namecontroller: Editcontroller.namecontroller,
             ),
             ClassField(
-              classcontroller: classcontroller,
+              classcontroller: Editcontroller.classcontroller,
             ),
             Agefield(
-              agecontroller: agecontroller,
+              agecontroller: Editcontroller.agecontroller,
             ),
             phonefield(
-              phonecontroller: phonecontroller,
+              phonecontroller: Editcontroller.phonecontroller,
             ),
             SizedBox(
               height: 20,
             ),
             SubmitButton(
-              titletext: 'Save Student',
+              titletext: 'Update student',
               onTap: () async {
                 StudentModel data = StudentModel(
-                    name: namecontroller.text,
-                    age: agecontroller.text,
-                    study: classcontroller.text,
-                    images: addcontroller.imagepath.value.toString(),
-                    phone: phonecontroller.text);
-                await SQLHelper.insertdata(data);
+                    name: Editcontroller.namecontroller.text,
+                    age: Editcontroller.agecontroller.text,
+                    study: Editcontroller.classcontroller.text,
+                    images: Editcontroller.imagepath.value.toString(),
+                    phone: Editcontroller.phonecontroller.text);
+                await SQLHelper.updateData(studentModel.id!, data);
                 print('added');
                 Get.back();
               },

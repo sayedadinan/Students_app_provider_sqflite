@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:student_manage_app/view/screens/Student_adding/funtions/funtions.dart';
+import 'package:student_manage_app/controllers/student_edit_controller.dart';
 
-class ImageContainer extends StatelessWidget {
-  const ImageContainer({
+class EditImage extends StatelessWidget {
+  const EditImage({
     super.key,
   });
 
@@ -33,7 +33,7 @@ class ImageContainer extends StatelessWidget {
                               Text('Camera', style: TextStyle()),
                               IconButton(
                                   onPressed: () {
-                                    getImage(ImageSource.camera);
+                                    editImage(ImageSource.camera);
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
                                   },
@@ -49,7 +49,7 @@ class ImageContainer extends StatelessWidget {
                               Text('Gallery', style: TextStyle()),
                               IconButton(
                                   onPressed: () {
-                                    getImage(ImageSource.gallery);
+                                    editImage(ImageSource.gallery);
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
                                   },
@@ -72,13 +72,13 @@ class ImageContainer extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: const Color.fromARGB(255, 55, 135, 142)),
-                child: addcontroller.imagepath.value.isEmpty
+                child: Editcontroller.imagepath.value.isEmpty
                     ? Image.asset(
                         'lib/assets/user for student.jpg',
                         fit: BoxFit.cover,
                       )
                     : Image.file(
-                        File(addcontroller.imagepath.value),
+                        File(Editcontroller.imagepath.value),
                         fit: BoxFit.cover,
                       ),
               );

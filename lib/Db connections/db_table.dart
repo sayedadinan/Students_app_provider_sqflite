@@ -131,6 +131,7 @@ class SQLHelper {
   }
 
   static Future<int> updateData(int id, StudentModel studentModel) async {
+    print('successfully edited');
     final db = await SQLHelper.db();
     final data = {
       "name": studentModel.name,
@@ -141,6 +142,7 @@ class SQLHelper {
     };
     final result =
         await db.update("user", data, where: "id=?", whereArgs: [id]);
+    print('updated data $result');
     Get.find<StudentController>().fetchStudents();
     return result;
   }

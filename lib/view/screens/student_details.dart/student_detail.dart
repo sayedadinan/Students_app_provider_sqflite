@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_manage_app/controllers/student_edit_controller.dart';
+import 'package:student_manage_app/controllers/student_edit_provider.dart';
 import 'package:student_manage_app/view/screens/student_details.dart/widgets/containers.dart';
 
 class Detailspage extends StatelessWidget {

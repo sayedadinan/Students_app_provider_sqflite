@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:student_manage_app/controllers/student_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:student_manage_app/controllers/student_provider.dart';
 import 'package:student_manage_app/view/screens/search_screen/widgets/search_result_tile.dart';
 
 class Searchscreen extends StatelessWidget {
@@ -8,7 +8,7 @@ class Searchscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    studentController.searchdata("");
+    StudentController studentprovider = Provider.of(context);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 185, 206, 208),
       appBar: AppBar(
@@ -24,7 +24,7 @@ class Searchscreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 onChanged: (value) {
-                  studentController.searchdata(value);
+                  studentprovider.searchdata(value);
                 },
                 decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
@@ -43,18 +43,17 @@ class Searchscreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(child: Obx(() {
-            if (studentController.searchresultlist.isEmpty) {
-              return Center(
-                child: Text(
-                  'No results found',
-                  style: TextStyle(fontSize: 18),
-                ),
-              );
-            } else {
-              return Searchresult();
-            }
-          }))
+          Expanded(
+              child: Expanded(
+            child: studentprovider.searchresultlist.isEmpty
+                ? Center(
+                    child: Text(
+                      'No results found',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                : Searchresult(),
+          ))
         ],
       ),
     );

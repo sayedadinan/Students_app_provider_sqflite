@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:student_manage_app/Db%20connections/db_table.dart';
-import 'package:student_manage_app/controllers/student_controller.dart';
+import 'package:student_manage_app/controllers/student_provider.dart';
 import 'package:student_manage_app/view/screens/Edit_data/data_editing.dart';
 import 'package:student_manage_app/view/screens/student_details.dart/student_detail.dart';
-
-final StudentController controller = Get.find();
 
 class Listtile extends StatelessWidget {
   const Listtile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final StudentController controller = Get.find();
+    final StudentController controller = Provider.of(context);
     return ListView.builder(
       itemCount: controller.studentList.length,
       itemBuilder: (context, index) {
@@ -21,18 +19,14 @@ class Listtile extends StatelessWidget {
             onTap: () async {
               FocusManager.instance.primaryFocus?.unfocus();
               await Future.delayed(Duration(milliseconds: 140));
-              Get.to(
-                  Detailspage(
-                    id: student.id!,
-                    name: student.name,
-                    study: student.study,
-                    age: student.age,
-                    phone: student.phone,
-                    image: student.images,
-                  ),
-                  fullscreenDialog: true,
-                  transition: Transition.leftToRightWithFade,
-                  duration: Duration(milliseconds: 600));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Detailspage(
+                      id: student.id!,
+                      name: student.name,
+                      study: student.study,
+                      age: student.age,
+                      phone: student.phone,
+                      image: student.images)));
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -49,13 +43,15 @@ class Listtile extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Get.to(Editstudent(studentModel: student));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  Editstudent(studentModel: student)));
                         },
                         icon: Icon(Icons.edit),
                       ),
                       IconButton(
                         onPressed: () {
-                          SQLHelper.deleteData(student.id!);
+                          SQLHelper.deleteData(student.id!, context);
                         },
                         icon: Icon(Icons.delete),
                       ),

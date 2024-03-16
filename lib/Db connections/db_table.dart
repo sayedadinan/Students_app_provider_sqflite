@@ -1,101 +1,12 @@
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-// import 'package:get/get_rx/src/rx_types/rx_types.dart';
-// import 'package:get/get_state_manager/get_state_manager.dart';
-// import 'package:sqflite/sqflite.dart';
-// import 'package:sqflite/sqflite.dart';
-// import 'package:sqflite/sqflite.dart';
-// import 'package:sqflite/sqlite_api.dart';
+import 'package:provider/provider.dart';
 import 'package:student_manage_app/Model/student_model.dart';
 import 'package:sqflite/sqflite.dart' as sql;
-import 'package:student_manage_app/controllers/student_controller.dart';
-// class Studentdatacntrl extends GetxController {
-//   Database? database;
-//   RxList<StudentModel> studentdata = <StudentModel>[].obs;
+import 'package:student_manage_app/controllers/student_provider.dart';
 
-//   Future<dynamic> initDb() async {
-//     database = await openDatabase(
-//       'studentDb',
-//       version: 1,
-//       onCreate: (db, version) async {
-//         await db.execute(
-// 'CREATE TABLE user(id INTEGER PRIMARY KEY,  name TEXT, study TEXT, age TEXT, phone TEXT,selectedImage TEXT)',
-//         );
-//       },
-//     );
-//   }
-
-//   addstudent(StudentModel data) async {
-//     print('reached');
-//     await database!.rawInsert(
-//         'INSERT INTO user(name,study,age,phone,selectedImage)VALUES(?,?,?,?,?)',
-//         [data.name, data.study, data.age, data.phone, data.images]);
-//     print('data added');
-//   }
-
-//   get() async {
-//     final result = await database!.rawQuery('SELECT * FROM user');
-//     studentdata.clear();
-//     for (var data in result) {
-//       final student = StudentModel.fromMap(data);
-//       studentdata.add(student);
-//     }
-//   }
-// }
-// class Studentdatacntrl extends GetxController {
-//   Database? database;
-//   RxList<StudentModel> studentdata = <StudentModel>[].obs;
-
-//   Future<void> initDb() async {
-//     try {
-//       database = await openDatabase(
-//         'studentDb',
-//         version: 1,
-//         onCreate: (db, version) async {
-//           await db.execute(
-// 'CREATE TABLE user(id INTEGER PRIMARY KEY,  name TEXT, study TEXT, age TEXT, phone TEXT,selectedImage TEXT)',
-//           );
-//         },
-//       );
-//     } catch (e) {
-//       print('Error initializing database: $e');
-//     }
-//   }
-
-//   Future<void> addstudent(StudentModel data) async {
-//     final db = Studentdatacntrl().initDb();
-//     try {
-//       print('reached');
-//       await db
-//           .
-
-//           // await db.rawInsert(
-//           //   'INSERT INTO user(name,study,age,phone,selectedImage)VALUES(?,?,?,?,?)',
-//           //   [data.name, data.study, data.age, data.phone, data.images],
-//           // );
-//           print('data added');
-//     } catch (e) {
-//       print('Error adding student: $e');
-//     }
-//   }
-
-//   Future<void> getData() async {
-//     try {
-//       final result = await database!.rawQuery('SELECT * FROM user');
-//       studentdata.clear();
-//       for (var data in result) {
-//         final student = StudentModel.fromMap(data);
-//         studentdata.add(student);
-//       }
-//     } catch (e) {
-//       print('Error getting data: $e');
-//     }
-//   }
-// }
 class SQLHelper {
   static Future<void> createTables(sql.Database database) async {
     await database.execute(
-        'CREATE TABLE user(id INTEGER PRIMARY KEY,  name TEXT, study TEXT, age TEXT, phone TEXT,selectedImage TEXT)');
+        'CREATE TABLE data(id INTEGER PRIMARY KEY,  name TEXT, study TEXT, age TEXT, phone TEXT,selectedImage TEXT)');
   }
 
   static Future<sql.Database> db() async {
@@ -108,7 +19,7 @@ class SQLHelper {
     );
   }
 
-  static Future<int> insertdata(StudentModel studentModel) async {
+  static Future<int> insertdata(context, StudentModel studentModel) async {
     final db = await SQLHelper.db();
     final data = {
       "name": studentModel.name,
@@ -117,9 +28,9 @@ class SQLHelper {
       "phone": studentModel.phone,
       "selectedImage": studentModel.images,
     };
-    final id = await db.insert("user", data,
+    final id = await db.insert("data", data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
-    Get.find<StudentController>().fetchStudents();
+    Provider.of<StudentController>(context, listen: false).fetchStudents();
     print(id);
     return id;
   }
@@ -127,10 +38,11 @@ class SQLHelper {
   static Future<List<Map<String, dynamic>>> getAllData() async {
     print('worked');
     final db = await SQLHelper.db();
-    return db.query("user", orderBy: "id");
+    return db.query("data", orderBy: "id");
   }
 
-  static Future<int> updateData(int id, StudentModel studentModel) async {
+  static Future<int> updateData(
+      int id, StudentModel studentModel, context) async {
     print('successfully edited');
     final db = await SQLHelper.db();
     final data = {
@@ -141,15 +53,15 @@ class SQLHelper {
       "selectedImage": studentModel.images,
     };
     final result =
-        await db.update("user", data, where: "id=?", whereArgs: [id]);
+        await db.update("data", data, where: "id=?", whereArgs: [id]);
     print('updated data $result');
-    Get.find<StudentController>().fetchStudents();
+    Provider.of<StudentController>(context, listen: false).fetchStudents();
     return result;
   }
 
-  static Future<void> deleteData(int id) async {
+  static Future<void> deleteData(int id, context) async {
     final db = await SQLHelper.db();
-    db.delete("user", where: "id=?", whereArgs: [id]);
-    Get.find<StudentController>().fetchStudents();
+    db.delete("data", where: "id=?", whereArgs: [id]);
+    Provider.of<StudentController>(context, listen: false).fetchStudents();
   }
 }

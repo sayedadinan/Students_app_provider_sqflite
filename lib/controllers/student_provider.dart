@@ -1,18 +1,19 @@
 import 'dart:developer';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:student_manage_app/Db%20connections/db_table.dart';
 import 'package:student_manage_app/Model/student_model.dart';
 
-class StudentController extends GetxController {
-  RxList<StudentModel> studentList = <StudentModel>[].obs;
-  RxList<StudentModel> searchresultlist = <StudentModel>[].obs;
-  RxBool isloading = false.obs;
-  @override
+class StudentController extends ChangeNotifier {
+  List<StudentModel> studentList = <StudentModel>[];
+  List<StudentModel> searchresultlist = <StudentModel>[];
+  bool isloading = false;
   void onInit() async {
-    isloading.value = true;
+    isloading = true;
+    notifyListeners();
     await fetchStudents();
-    isloading.value = false;
-    super.onInit();
+    searchresultlist = [...studentList];
+    isloading = false;
+    notifyListeners();
   }
 
   fetchStudents() async {
@@ -30,8 +31,11 @@ class StudentController extends GetxController {
           phone: student['phone'],
         );
       }).toList();
+      studentList.clear();
+      studentList.addAll(students);
+      searchdata('');
+      notifyListeners();
 
-      studentList.assignAll(students);
       log("Mapped students: $students");
     } catch (e) {
       log("Error fetching students: $e");
@@ -39,16 +43,16 @@ class StudentController extends GetxController {
   }
 
   searchdata(String query) async {
-    await fetchStudents();
+    // await fetchStudents();
     if (query.isEmpty) {
-      searchresultlist.value = [...studentList];
+      searchresultlist = [...studentList];
+      // notifyListeners();
     } else {
-      searchresultlist.value = studentList
+      searchresultlist = studentList
           .where((element) =>
               element.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
+    notifyListeners();
   }
 }
-
-final StudentController studentController = Get.find();

@@ -1,19 +1,19 @@
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:flutter/material.dart';
 
-class Studentaddcontrol extends GetxController {
-  RxString imagepath = ''.obs;
-  RxBool imageerror = false.obs;
-  RxBool isimageselected = false.obs;
+class Studentaddcontrol extends ChangeNotifier {
+  String imagepath = '';
+  bool imageerror = false;
+  bool isimageselected = false;
+  notifyListeners();
   void initialize() {
-    imagepath.value = '';
-    imageerror.value = false;
-    isimageselected.value = false;
+    imagepath = '';
+    imageerror = false;
+    isimageselected = false;
+    notifyListeners();
   }
 
   addimage(String imagepaths) {
-    imagepath.value = imagepaths;
-    isimageselected.value = true;
-    // isimageselected = true;
+    imagepath = imagepaths;
+    notifyListeners();
   }
 }

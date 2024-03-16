@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:student_manage_app/Db%20connections/db_table.dart';
 import 'package:student_manage_app/Model/student_model.dart';
 import 'package:student_manage_app/controllers/student_adding.dart';
-import 'package:student_manage_app/view/screens/Student_adding/funtions/funtions.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/image_box.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/savebutton.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/textfiled.dart';
@@ -16,10 +15,12 @@ class Addstudent extends StatelessWidget {
   final TextEditingController classcontroller = TextEditingController();
   final TextEditingController agecontroller = TextEditingController();
   final TextEditingController phonecontroller = TextEditingController();
-  final Studentaddcontrol controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
-    controller.initialize();
+    // Studentaddcontrol addcontroller = Provider.of(context);
+    final Studentaddcontrol studentprovider = Provider.of(context);
+    studentprovider.initialize();
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 185, 206, 208),
       appBar: AppBar(
@@ -65,11 +66,11 @@ class Addstudent extends StatelessWidget {
                     name: namecontroller.text,
                     age: agecontroller.text,
                     study: classcontroller.text,
-                    images: addcontroller.imagepath.value.toString(),
+                    images: studentprovider.imagepath.toString(),
                     phone: phonecontroller.text);
-                await SQLHelper.insertdata(data);
+                await SQLHelper.insertdata(context, data);
                 print('added');
-                Get.back();
+                Navigator.of(context).pop();
               },
             )
           ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:student_manage_app/Db%20connections/db_table.dart';
 import 'package:student_manage_app/Model/student_model.dart';
-import 'package:student_manage_app/controllers/student_edit_controller.dart';
+import 'package:student_manage_app/controllers/student_edit_provider.dart';
 import 'package:student_manage_app/view/screens/Edit_data/widgets/editimage.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/savebutton.dart';
 import 'package:student_manage_app/view/screens/Student_adding/widgets/textfiled.dart';
@@ -16,7 +16,8 @@ class Editstudent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Editcontroller.initialValues(
+    StudentEditcontroller editprovider = Provider.of(context);
+    Provider.of<StudentEditcontroller>(context, listen: false).initialValues(
         study: studentModel.study,
         name: studentModel.name,
         age: studentModel.age,
@@ -46,16 +47,16 @@ class Editstudent extends StatelessWidget {
               height: 20,
             ),
             Namefield(
-              namecontroller: Editcontroller.namecontroller,
+              namecontroller: editprovider.namecontroller,
             ),
             ClassField(
-              classcontroller: Editcontroller.classcontroller,
+              classcontroller: editprovider.classcontroller,
             ),
             Agefield(
-              agecontroller: Editcontroller.agecontroller,
+              agecontroller: editprovider.agecontroller,
             ),
             phonefield(
-              phonecontroller: Editcontroller.phonecontroller,
+              phonecontroller: editprovider.phonecontroller,
             ),
             SizedBox(
               height: 20,
@@ -64,14 +65,14 @@ class Editstudent extends StatelessWidget {
               titletext: 'Update student',
               onTap: () async {
                 StudentModel data = StudentModel(
-                    name: Editcontroller.namecontroller.text,
-                    age: Editcontroller.agecontroller.text,
-                    study: Editcontroller.classcontroller.text,
-                    images: Editcontroller.imagepath.value.toString(),
-                    phone: Editcontroller.phonecontroller.text);
-                await SQLHelper.updateData(studentModel.id!, data);
+                    name: editprovider.namecontroller.text,
+                    age: editprovider.agecontroller.text,
+                    study: editprovider.classcontroller.text,
+                    images: editprovider.imagepath.toString(),
+                    phone: editprovider.phonecontroller.text);
+                await SQLHelper.updateData(studentModel.id!, data, context);
                 print('added');
-                Get.back();
+                Navigator.of(context).pop();
               },
             )
           ],
